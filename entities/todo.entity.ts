@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { User } from './user.entity';
 
 @Entity()
@@ -20,9 +20,9 @@ export class Todo {
   @Column()
   userId: string;
 
-  @Column()
+  @CreateDateColumn()
   createdAt: string;
 
-  @Column()
+  @UpdateDateColumn()
   updatedAt: string;
 }
