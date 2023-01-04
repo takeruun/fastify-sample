@@ -7,8 +7,7 @@
     "build": "tsc -p tsconfig.json",
     "start": "ts-node src/index.ts",
     "typeorm": "typeorm-ts-node-commonjs",
-    "migration:generate": "typeorm migration:generate -d db/ormconfig.ts && build",
-    "migration:run": "typeorm migration:run -d db/ormconfig.ts"
+    "migration:run": "typeorm-ts-node-commonjs migration:run -d db/ormconfig.ts"
   },
   "dependencies": {
     "dotenv": "^16.0.3",

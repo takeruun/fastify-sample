@@ -1,5 +1,6 @@
 import { DataSource } from 'typeorm';
 import { Todo } from '../entities/todo.entity';
+import { User } from '../entities/user.entity';
 
 const typeOrmDatabaseSource = new DataSource({
   type: 'mysql',
@@ -10,7 +11,7 @@ const typeOrmDatabaseSource = new DataSource({
   database: "fatify",
   synchronize: true,
   logging: true,
-  entities: ['dist/entities/*.entity.js'],
+  entities: [Todo, User],
   migrations: ['dist/db/migrations/*.js'],
 });
 
