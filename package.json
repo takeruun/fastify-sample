@@ -5,11 +5,12 @@
   "license": "MIT",
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "start": "ts-node src/index.ts",
+    "start": "ts-node ./dist/index.js",
     "typeorm": "typeorm-ts-node-commonjs",
     "migration:run": "typeorm-ts-node-commonjs migration:run -d db/ormconfig.ts"
   },
   "dependencies": {
+    "@sinclair/typebox": "^0.25.16",
     "dotenv": "^16.0.3",
     "fastify": "^4.10.2",
     "fastify-plugin": "^4.4.0",
