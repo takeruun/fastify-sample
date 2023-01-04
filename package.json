@@ -5,13 +5,24 @@
   "license": "MIT",
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "start": "node ./dist/index.js"
+    "start": "ts-node src/index.ts",
+    "typeorm": "typeorm-ts-node-commonjs",
+    "migration:generate": "typeorm migration:generate -d db/ormconfig.ts && build",
+    "migration:run": "typeorm migration:run -d db/ormconfig.ts"
   },
   "dependencies": {
-    "fastify": "^4.10.2"
+    "dotenv": "^16.0.3",
+    "fastify": "^4.10.2",
+    "fastify-plugin": "^4.4.0",
+    "mysql": "^2.18.1",
+    "pg": "^8.4.0",
+    "reflect-metadata": "^0.1.13",
+    "typeorm": "0.3.11",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
-    "@types/node": "^18.11.18",
-    "typescript": "^4.9.4"
+    "@types/node": "^16.11.10",
+    "ts-node": "10.7.0",
+    "typescript": "4.5.2"
   }
 }
