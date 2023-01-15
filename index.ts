@@ -1,46 +1,172 @@
-import fastify from 'fastify';
+import fastify, { FastifyInstance } from 'fastify';
 import { TodoType, UserType } from 'schema';
 import fp from './db';
 import { User } from './entities/user.entity';
 import { Todo } from './entities/todo.entity';
+import fastifySwagger from '@fastify/swagger';
+import swaggerUi from '@fastify/swagger-ui';
+import { writeFileSync } from 'fs';
 
 const server = fastify({ logger: true });
 server.register(fp);
 
-server.get('/hello', async (request, reply) => {
-  return 'hello\n';
+server.register(fastifySwagger, {
+  swagger: {
+    info: {
+      title: 'Fastify todo api',
+      description: 'Fastify todo api Swagger',
+      version: '1.0.0',
+    },
+    host: 'localhost:8080',
+    schemes: ['http'],
+    consumes: ['application/json'],
+    produces: ['application/json'],
+    securityDefinitions: {
+      apiKey: {
+        type: 'apiKey',
+        name: 'Cookie',
+        in: '_fastify-todo_access-token',
+      },
+    },
+  },
 });
 
-server.post<{ Body: UserType }>('/sign_up', async (request, reply) => {
-  const { name, password } = request.body;
-
-  const user = await server.db.getRepository(User).save({
-    name,
-    password,
-  });
-
-  return user;
+server.register(swaggerUi, {
+  routePrefix: '/docs',
+  staticCSP: true,
 });
 
-server.get('/todo', async (request, reply) => {
-  const todos = await server.db.getRepository(Todo).find();
+const helloRoutes = async (server: FastifyInstance): Promise<void> => {
+  server.get(
+    '/hello',
+    {
+      schema: {
+        summary: 'sample api',
+        response: {
+          200: { type: 'string' },
+        },
+      },
+    },
+    async (request, reply) => {
+      return 'hello\n';
+    },
+  );
+};
+const todoRoutes = async (server: FastifyInstance): Promise<void> => {
+  server.get(
+    '/todo',
+    {
+      schema: {
+        response: {
+          200: {
+            type: 'array',
+            todos: {
+              type: 'object',
+              properties: {
+                id: { type: 'string' },
+                title: { type: 'string' },
+                describe: { type: 'string' },
+                userId: { type: 'string' },
+                user: {
+                  type: 'object',
+                  properties: {
+                    id: { type: 'string' },
+                    name: { type: 'string' },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    async (request, reply) => {
+      const todos = await server.db.getRepository(Todo).find();
 
-  return todos;
-});
+      return { todos: todos };
+    },
+  );
+  server.post<{ Body: TodoType }>(
+    '/todo',
+    {
+      schema: {
+        response: {
+          200: {
+            type: 'object',
+            properties: {
+              id: { type: 'string' },
+              title: { type: 'string' },
+              describe: { type: 'string' },
+              userId: { type: 'string' },
+              user: {
+                type: 'object',
+                properties: {
+                  id: { type: 'string' },
+                  name: { type: 'string' },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    async (request, reply) => {
+      const { title, describe } = request.body;
 
-server.post<{ Body: TodoType }>('/todo', async (request, reply) => {
-  const { title, describe } = request.body;
+      const user = await server.db
+        .getRepository(User)
+        .findOne({ where: { id: '21ac668b-b761-4214-9b98-10d3ad1e1a1a' } });
 
-  const user = await server.db.getRepository(User).findOne({ where: { id: '21ac668b-b761-4214-9b98-10d3ad1e1a1a' } });
+      const todo = await server.db.getRepository(Todo).save({
+        title,
+        describe,
+        user,
+      });
 
-  const todo = await server.db.getRepository(Todo).save({
-    title,
-    describe,
-    user,
-  });
+      return todo;
+    },
+  );
+};
+const authRoutes = async (server: FastifyInstance): Promise<void> => {
+  server.post<{ Body: UserType }>(
+    '/sign_up',
+    {
+      schema: {
+        response: {
+          200: {
+            type: 'object',
+            properties: {
+              id: { type: 'string' },
+              name: { type: 'string' },
+            },
+          },
+        },
+      },
+    },
+    async (request, reply) => {
+      const { name, password } = request.body;
 
-  return todo;
-});
+      const user = await server.db.getRepository(User).save({
+        name,
+        password,
+      });
+
+      return user;
+    },
+  );
+};
+
+server.register(helloRoutes);
+server.register(todoRoutes);
+server.register(authRoutes);
+
+const setYml = async () => {
+  // generate sjon
+  const responseJson = await server.inject('/docs/yaml');
+  writeFileSync('docs/openapi.yml', responseJson.payload);
+};
+
+setYml();
 
 server.listen({ port: 8080 }, (err, address) => {
   if (err) {

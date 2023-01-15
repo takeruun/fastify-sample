@@ -1,0 +1,86 @@
+swagger: "2.0"
+info:
+  title: Fastify todo api
+  description: Fastify todo api Swagger
+  version: 1.0.0
+definitions: {}
+paths:
+  /hello:
+    get:
+      summary: sample api
+      responses:
+        "200":
+          description: Default Response
+          schema:
+            type: string
+  /todo:
+    get:
+      responses:
+        "200":
+          description: Default Response
+          schema:
+            type: array
+            todos:
+              type: object
+              properties:
+                id:
+                  type: string
+                title:
+                  type: string
+                describe:
+                  type: string
+                userId:
+                  type: string
+                user:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    name:
+                      type: string
+    post:
+      responses:
+        "200":
+          description: Default Response
+          schema:
+            type: object
+            properties:
+              id:
+                type: string
+              title:
+                type: string
+              describe:
+                type: string
+              userId:
+                type: string
+              user:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  name:
+                    type: string
+  /sign_up:
+    post:
+      responses:
+        "200":
+          description: Default Response
+          schema:
+            type: object
+            properties:
+              id:
+                type: string
+              name:
+                type: string
+host: localhost:8080
+schemes:
+  - http
+consumes:
+  - application/json
+produces:
+  - application/json
+securityDefinitions:
+  apiKey:
+    type: apiKey
+    name: Cookie
+    in: _fastify-todo_access-token
