@@ -1,0 +1,6 @@
+{
+  "ignorePatterns": ["node_modules", "dist"],
+  "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended", "prettier"],
+  "plugins": ["unused-imports", "@typescript-eslint", "import"],
+  "parser": "@typescript-eslint/parser"
+}
