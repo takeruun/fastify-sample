@@ -29,6 +29,18 @@ server.register(fastifySwagger, {
       },
     },
   },
+  openapi: {
+    info: {
+      title: 'Fastify todo api',
+      description: 'Fastify todo api Swagger',
+      version: '1.0.0',
+    },
+    servers: [
+      {
+        url: 'localhost:8080',
+      },
+    ],
+  },
 });
 
 server.register(swaggerUi, {
@@ -47,11 +59,31 @@ const helloRoutes = async (server: FastifyInstance): Promise<void> => {
         },
       },
     },
-    async (request, reply) => {
+    async (_request, _reply) => {
       return 'hello\n';
     },
   );
 };
+
+server.addSchema({
+  $id: 'user',
+  type: 'object',
+  properties: {
+    id: { type: 'string' },
+    name: { type: 'string' },
+  },
+});
+server.addSchema({
+  $id: 'todo',
+  type: 'object',
+  properties: {
+    id: { type: 'string' },
+    title: { type: 'string' },
+    describe: { type: 'string' },
+    userId: { type: 'string' },
+    user: { $ref: 'user#' },
+  },
+});
 const todoRoutes = async (server: FastifyInstance): Promise<void> => {
   server.get(
     '/todo',
@@ -60,30 +92,17 @@ const todoRoutes = async (server: FastifyInstance): Promise<void> => {
         response: {
           200: {
             type: 'array',
-            todos: {
-              type: 'object',
-              properties: {
-                id: { type: 'string' },
-                title: { type: 'string' },
-                describe: { type: 'string' },
-                userId: { type: 'string' },
-                user: {
-                  type: 'object',
-                  properties: {
-                    id: { type: 'string' },
-                    name: { type: 'string' },
-                  },
-                },
-              },
+            items: {
+              $ref: 'todo#',
             },
           },
         },
       },
     },
-    async (request, reply) => {
+    async (_request, _reply) => {
       const todos = await server.db.getRepository(Todo).find();
 
-      return { todos: todos };
+      return todos;
     },
   );
   server.post<{ Body: TodoType }>(
@@ -92,25 +111,12 @@ const todoRoutes = async (server: FastifyInstance): Promise<void> => {
       schema: {
         response: {
           200: {
-            type: 'object',
-            properties: {
-              id: { type: 'string' },
-              title: { type: 'string' },
-              describe: { type: 'string' },
-              userId: { type: 'string' },
-              user: {
-                type: 'object',
-                properties: {
-                  id: { type: 'string' },
-                  name: { type: 'string' },
-                },
-              },
-            },
+            $ref: 'todo#',
           },
         },
       },
     },
-    async (request, reply) => {
+    async (request, _reply) => {
       const { title, describe } = request.body;
 
       const user = await server.db
@@ -143,7 +149,7 @@ const authRoutes = async (server: FastifyInstance): Promise<void> => {
         },
       },
     },
-    async (request, reply) => {
+    async (request, _reply) => {
       const { name, password } = request.body;
 
       const user = await server.db.getRepository(User).save({

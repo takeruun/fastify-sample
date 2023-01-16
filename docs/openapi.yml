@@ -1,9 +1,32 @@
-swagger: "2.0"
+openapi: 3.0.3
 info:
   title: Fastify todo api
   description: Fastify todo api Swagger
   version: 1.0.0
-definitions: {}
+components:
+  schemas:
+    def-0:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+      title: user
+    def-1:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        describe:
+          type: string
+        userId:
+          type: string
+        user:
+          $ref: "#/components/schemas/def-0"
+      title: todo
 paths:
   /hello:
     get:
@@ -11,76 +34,42 @@ paths:
       responses:
         "200":
           description: Default Response
-          schema:
-            type: string
+          content:
+            application/json:
+              schema:
+                type: string
   /todo:
     get:
       responses:
         "200":
           description: Default Response
-          schema:
-            type: array
-            todos:
-              type: object
-              properties:
-                id:
-                  type: string
-                title:
-                  type: string
-                describe:
-                  type: string
-                userId:
-                  type: string
-                user:
-                  type: object
-                  properties:
-                    id:
-                      type: string
-                    name:
-                      type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/def-1"
     post:
       responses:
         "200":
           description: Default Response
-          schema:
-            type: object
-            properties:
-              id:
-                type: string
-              title:
-                type: string
-              describe:
-                type: string
-              userId:
-                type: string
-              user:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/def-1"
+  /sign_up:
+    post:
+      responses:
+        "200":
+          description: Default Response
+          content:
+            application/json:
+              schema:
                 type: object
                 properties:
                   id:
                     type: string
                   name:
                     type: string
-  /sign_up:
-    post:
-      responses:
-        "200":
-          description: Default Response
-          schema:
-            type: object
-            properties:
-              id:
-                type: string
-              name:
-                type: string
-host: localhost:8080
-schemes:
-  - http
-consumes:
-  - application/json
-produces:
-  - application/json
-securityDefinitions:
-  apiKey:
-    type: apiKey
-    name: Cookie
-    in: _fastify-todo_access-token
+servers:
+  - url: localhost:8080
