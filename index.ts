@@ -10,6 +10,8 @@ import { writeFileSync } from 'fs';
 const server = fastify({ logger: true });
 server.register(fp);
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 server.register(fastifySwagger, {
   swagger: {
     info: {
@@ -40,6 +42,11 @@ server.register(fastifySwagger, {
         url: 'localhost:8080',
       },
     ],
+  },
+  refResolver: {
+    buildLocalReference: (json, _baseUri, _fragment, _i) => {
+      return json.$id;
+    },
   },
 });
 
