@@ -4,14 +4,13 @@ import fp from './db';
 import { User } from './entities/user.entity';
 import { Todo } from './entities/todo.entity';
 import fastifySwagger from '@fastify/swagger';
+import RefResolver from 'json-schema-resolver';
 import swaggerUi from '@fastify/swagger-ui';
 import { writeFileSync } from 'fs';
 
 const server = fastify({ logger: true });
 server.register(fp);
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 server.register(fastifySwagger, {
   swagger: {
     info: {
@@ -44,8 +43,8 @@ server.register(fastifySwagger, {
     ],
   },
   refResolver: {
-    buildLocalReference: (json, _baseUri, _fragment, _i) => {
-      return json.$id;
+    buildLocalReference(json, _baseUri, _fragment, _i) {
+      return `${json.$id}`;
     },
   },
 });
