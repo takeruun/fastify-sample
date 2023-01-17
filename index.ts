@@ -4,7 +4,6 @@ import fp from './db';
 import { User } from './entities/user.entity';
 import { Todo } from './entities/todo.entity';
 import fastifySwagger from '@fastify/swagger';
-import RefResolver from 'json-schema-resolver';
 import swaggerUi from '@fastify/swagger-ui';
 import { writeFileSync } from 'fs';
 
@@ -43,6 +42,7 @@ server.register(fastifySwagger, {
     ],
   },
   refResolver: {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     buildLocalReference(json, _baseUri, _fragment, _i) {
       return `${json.$id}`;
     },
