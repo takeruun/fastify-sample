@@ -6,6 +6,7 @@ import { TodoType } from '../../schema';
 
 export const option = {
   schema: {
+    tags: ['todo'],
     response: {
       200: {
         $ref: 'todo#',

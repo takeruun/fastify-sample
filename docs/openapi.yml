@@ -26,7 +26,16 @@ components:
         user:
           $ref: "#/components/schemas/user"
 paths:
-  /hello:
+  /sign_up:
+    post:
+      responses:
+        "200":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/user"
+  /hello/:
     get:
       summary: sample api
       responses:
@@ -36,8 +45,10 @@ paths:
             application/json:
               schema:
                 type: string
-  /todo:
+  /todo/:
     get:
+      tags:
+        - todo
       responses:
         "200":
           description: Default Response
@@ -48,6 +59,8 @@ paths:
                 items:
                   $ref: "#/components/schemas/todo"
     post:
+      tags:
+        - todo
       responses:
         "200":
           description: Default Response
@@ -55,19 +68,5 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/todo"
-  /sign_up:
-    post:
-      responses:
-        "200":
-          description: Default Response
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  id:
-                    type: string
-                  name:
-                    type: string
 servers:
   - url: localhost:8080

@@ -4,6 +4,7 @@ import server from '../../index';
 
 export const option = {
   schema: {
+    tags: ['todo'],
     response: {
       200: {
         type: 'array',
